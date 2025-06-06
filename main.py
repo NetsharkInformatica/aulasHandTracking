@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import subprocess
 
 mp_maos= mp.solutions.hands
 mp_desenhar= mp.solutions.drawing_utils
@@ -10,6 +11,22 @@ resolucao_x=1024
 resolucao_y=768
 camera.set(cv2.CAP_PROP_FRAME_WIDTH,resolucao_x)
 camera.set(cv2.CAP_PROP_FRAME_HEIGHT,resolucao_y)
+
+#abre programas
+processo_notepad=None
+processo_mspaint=None
+processo_calc=None
+
+def inicia_programa(programa):
+    return subprocess.Popen(programa, shell=True)
+
+import os
+#fecha Programas
+
+def fecha_programa(nome_processo):
+    return os.system(f"TASKKILL /IM {nome_processo} /F")
+    
+
 
 def encontre_coordenada_maos(imagem, lado_invertido=False):
     imagem_rgb=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
@@ -65,7 +82,31 @@ while camera.isOpened():
     imagem, todas_maos= encontre_coordenada_maos(frame,False)
     if len(todas_maos)==1:
         info_dedo_mao= dedos_levantados(todas_maos[0])
-        print(f"esse é o {info_dedo_mao}")
+        #print(f"esse é o {info_dedo_mao}")
+        if info_dedo_mao== [True, False,False,True]:
+            break
+        elif info_dedo_mao == [True,False,False,False] and processo_notepad is None:
+            processo_notepad=inicia_programa("notepad")
+        elif info_dedo_mao == [True,True,False,False] and processo_calc is None:
+            processo_calc=inicia_programa("calc")
+        elif info_dedo_mao == [True,True,True,True] and processo_mspaint is None:
+            processo_mspaint=inicia_programa("mspaint")
+        #fecha programas
+        elif info_dedo_mao == [False,False,False,False] :
+            if processo_notepad is not None:
+                fecha_programa("notepad.exe")
+                processo_notepad= None
+            elif processo_calc is not None:
+                fecha_programa("calc.exe")
+                processo_calc=None
+            elif processo_mspaint is not None:
+                fecha_programa("mspaint.exe")
+                processo_mspaint=None
+                
+               
+                
+            
+            
     
     cv2.imshow("Camera",imagem)
     tecla=cv2.waitKey(1)
