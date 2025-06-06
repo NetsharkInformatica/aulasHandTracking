@@ -97,7 +97,7 @@ while camera.isOpened():
                 fecha_programa("notepad.exe")
                 processo_notepad= None
             elif processo_calc is not None:
-                fecha_programa("calc.exe")
+                fecha_programa("CalculatorApp.exe")
                 processo_calc=None
             elif processo_mspaint is not None:
                 fecha_programa("mspaint.exe")
