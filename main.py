@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import subprocess
+import pyautogui
 
 mp_maos= mp.solutions.hands
 mp_desenhar= mp.solutions.drawing_utils
@@ -16,6 +17,14 @@ camera.set(cv2.CAP_PROP_FRAME_HEIGHT,resolucao_y)
 processo_notepad=None
 processo_mspaint=None
 processo_calc=None
+processo_vlc= None
+caminho_vlc= r"C:\Program Files\VideoLAN\VLC\vlc.exe"
+caminho_musica= "musicas/teste.mp3"
+#"C:\Program Files\VideoLAN\VLC\vlc.exe"
+
+def tecla_pressionada(tecla):
+    pyautogui.press(tecla)
+    
 
 def inicia_programa(programa):
     return subprocess.Popen(programa, shell=True)
@@ -85,6 +94,8 @@ while camera.isOpened():
         #print(f"esse é o {info_dedo_mao}")
         if info_dedo_mao== [True, False,False,True]:
             break
+        elif info_dedo_mao==[True,True,False,True]:
+            processo_vlc==inicia_programa(f' "{caminho_vlc}" "{caminho_musica}"')
         elif info_dedo_mao == [True,False,False,False] and processo_notepad is None:
             processo_notepad=inicia_programa("notepad")
         elif info_dedo_mao == [True,True,False,False] and processo_calc is None:
